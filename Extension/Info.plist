@@ -25,7 +25,7 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ExtensionDelegate</string>
 		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.watchkit</string>
+		<string>com.apple.widget-kit-extension</string>
 	</dict>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.watchplayer.WatchPlayer</string>
