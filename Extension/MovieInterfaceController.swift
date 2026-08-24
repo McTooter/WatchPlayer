@@ -20,12 +20,8 @@ class MovieInterfaceController: WKInterfaceController {
     override func willActivate() {
         super.willActivate()
         if let url = video?.url {
-            moviePlayer.setMovieURL(url, startAt: 0, loop: false)
+            moviePlayer.setMovieURL(url)
+            moviePlayer.setLoops(false)
         }
-    }
-
-    override func didDeactivate() {
-        super.didDeactivate()
-        moviePlayer.stop()
     }
 }

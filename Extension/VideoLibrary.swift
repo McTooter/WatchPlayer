@@ -70,7 +70,7 @@ final class VideoLibrary {
     static func store(fileAt src: URL, preferredName: String) -> Bool {
         let fm = FileManager.default
         var name = preferredName
-        if !videoExtensions.contains(name.pathExtension.lowercased()) {
+        if !videoExtensions.contains((name as NSString).pathExtension.lowercased()) {
             name += ".mp4"
         }
         let sanitized = name.components(
