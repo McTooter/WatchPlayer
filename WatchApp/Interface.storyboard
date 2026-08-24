@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="WatchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wpMainCtrl">
-    <device id="watch38" orientation="portrait"/>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="11201" systemVersion="16B2327e" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wpMainCtrl">
     <dependencies>
-        <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="19006"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="11077"/>
     </dependencies>
     <scenes>
         <scene sceneID="wpMainScene">
             <objects>
-                <controller id="wpMainCtrl" customClass="InterfaceController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
+                <controller identifier="InterfaceController" id="wpMainCtrl" customClass="InterfaceController" customModule="WatchPlayer_WatchKit_Extension">
                     <items>
                         <label width="1" alignment="left" text="My Videos" id="wpHdrLbl"/>
                         <table alignment="left" id="wpTable">
                             <items>
-                                <tableRow identifier="VideoRow" id="wpRowProto" customClass="VideoRowController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
-                                    <group width="1" height="1" alignment="left" layout="vertical" id="wpRowGroup">
-                                        <label width="1" alignment="left" text="Title" numberOfLines="1" id="wpRowTitle"/>
-                                        <label width="1" alignment="left" text="Detail" numberOfLines="1" id="wpRowMeta"/>
+                                <tableRow identifier="VideoRow" id="wpRowProto" customClass="VideoRowController" customModule="WatchPlayer_WatchKit_Extension">
+                                    <group width="1" height="0.0" alignment="left" layout="vertical" id="wpRowGroup">
+                                        <items>
+                                            <label width="1" alignment="left" text="Title" numberOfLines="1" id="wpRowTitle"/>
+                                            <label width="1" alignment="left" text="Detail" numberOfLines="1" id="wpRowMeta"/>
+                                        </items>
                                     </group>
                                     <connections>
                                         <outlet property="titleLabel" destination="wpRowTitle" id="wpORowTitle"/>
@@ -26,7 +26,7 @@
                                 </tableRow>
                             </items>
                         </table>
-                        <label alignment="center" text="No videos yet. Send some from your iPhone, or pick a streaming title above." textAlignment="center" numberOfLines="4" hidden="YES" id="wpEmptyLbl"/>
+                        <label alignment="center" text="No videos yet. Send some from your iPhone." textAlignment="center" numberOfLines="4" hidden="YES" id="wpEmptyLbl"/>
                         <button width="1" alignment="left" title="Refresh" id="wpRefreshBtn">
                             <connections>
                                 <action selector="onRefresh:" destination="wpMainCtrl" id="wpActRefresh"/>
@@ -39,20 +39,20 @@
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="20" y="20"/>
+            <point key="canvasLocation" x="171" y="302"/>
         </scene>
         <scene sceneID="wpMovieScene">
             <objects>
-                <controller identifier="moviePlayer" id="wpMovieCtrl" customClass="MovieInterfaceController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
+                <controller identifier="moviePlayer" id="wpMovieCtrl" customClass="MovieInterfaceController" customModule="WatchPlayer_WatchKit_Extension">
                     <items>
-                        <movie alignment="left" id="wpMovieItem"/>
+                        <inlineMovie width="1" height="0.69999999999999996" alignment="center" id="wpMovieItem"/>
                     </items>
                     <connections>
                         <outlet property="moviePlayer" destination="wpMovieItem" id="wpOMovie"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="240" y="20"/>
+            <point key="canvasLocation" x="439" y="302"/>
         </scene>
     </scenes>
 </document>
