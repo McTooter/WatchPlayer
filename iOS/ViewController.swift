@@ -4,13 +4,39 @@ import WatchConnectivity
 
 final class ViewController: UIViewController {
 
-    @IBOutlet private weak var statusLabel: UILabel!
-
+    private let statusLabel = UILabel()
     private var pendingTransfers = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "WatchPlayer"
+        view.backgroundColor = .systemBackground
+
+        let titleLabel = UILabel()
+        titleLabel.text = "Send videos to your Apple Watch"
+        titleLabel.font = .boldSystemFont(ofSize: 17)
+        titleLabel.textAlignment = .center
+
+        let pickButton = UIButton(type: .system)
+        pickButton.setTitle("Choose Videos", for: .normal)
+        pickButton.addTarget(self, action: #selector(pickTapped), for: .touchUpInside)
+
+        statusLabel.font = .systemFont(ofSize: 14)
+        statusLabel.textColor = .secondaryLabel
+        statusLabel.textAlignment = .center
+        statusLabel.numberOfLines = 0
+
+        let stack = UIStackView(arrangedSubviews: [titleLabel, pickButton, statusLabel])
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.spacing = 24
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -16),
+            stack.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+
         if WCSession.isSupported() {
             WCSession.default.delegate = self
             WCSession.default.activate()
@@ -18,7 +44,7 @@ final class ViewController: UIViewController {
         updateStatus()
     }
 
-    @IBAction private func pickTapped(_ sender: Any) {
+    @objc private func pickTapped() {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.movie], asCopy: true)
         picker.allowsMultipleSelection = true
         picker.delegate = self

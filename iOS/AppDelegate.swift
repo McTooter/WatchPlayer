@@ -7,6 +7,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        true
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let listVC = ViewController()
+        listVC.title = "WatchPlayer"
+        window?.rootViewController = UINavigationController(rootViewController: listVC)
+        window?.makeKeyAndVisible()
+        return true
     }
 }

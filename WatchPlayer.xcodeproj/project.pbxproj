@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		BF0000000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* AppDelegate.swift */; };
 		BF0000000000000000000002 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* ViewController.swift */; };
-		BF0000000000000000000003 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* Main.storyboard */; };
 		BF0000000000000000000004 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* Interface.storyboard */; };
 		BF0000000000000000000005 /* sample.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* sample.mp4 */; };
 		BF0000000000000000000006 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000001 /* ExtensionDelegate.swift */; };
@@ -70,7 +69,6 @@
 		F10000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F10000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F10000000000000000000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F20000000000000000000001 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		F20000000000000000000002 /* Interface.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Interface.storyboard; sourceTree = "<group>"; };
 		F20000000000000000000003 /* sample.mp4 */ = {isa = PBXFileReference; lastKnownFileType = video.mp4; path = sample.mp4; sourceTree = "<group>"; };
 		F30000000000000000000001 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
@@ -128,7 +126,6 @@
 				F10000000000000000000001 /* AppDelegate.swift */,
 				F10000000000000000000002 /* ViewController.swift */,
 				F10000000000000000000003 /* Info.plist */,
-				F20000000000000000000001 /* Main.storyboard */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -267,7 +264,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0000000000000000000003 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
