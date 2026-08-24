@@ -1,0 +1,64 @@
+name: WatchPlayer
+options:
+  bundleIdPrefix: com.watchplayer
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "14.0"
+    watchOS: "8.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  WatchPlayer:
+    type: application
+    platform: iOS
+    sources:
+      - path: iOS
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.watchplayer.WatchPlayer
+        INFOPLIST_FILE: iOS/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1"
+        IPHONEOS_DEPLOYMENT_TARGET: "14.0"
+    dependencies:
+      - target: "WatchPlayer WatchKit App"
+    scheme:
+      testTargets: []
+  WatchPlayer WatchKit App:
+    type: application.watchapp2
+    platform: watchOS
+    sources:
+      - path: WatchApp
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.watchplayer.WatchPlayer.watchkitapp
+        INFOPLIST_FILE: WatchApp/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+        WATCHOS_DEPLOYMENT_TARGET: "8.0"
+    dependencies:
+      - target: "WatchPlayer WatchKit Extension"
+  WatchPlayer WatchKit Extension:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: Extension
+        excludes:
+          - "Info.plist"
+          - "Resources/sample.mp4"
+    sourcesWithBuildPhase:
+      resources:
+        - path: Extension/Resources/sample.mp4
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.watchplayer.WatchPlayer.watchkitapp.extension
+        INFOPLIST_FILE: Extension/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+        WATCHOS_DEPLOYMENT_TARGET: "8.0"

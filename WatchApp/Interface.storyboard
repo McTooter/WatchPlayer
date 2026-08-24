@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="WatchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wpMainCtrl">
+    <device id="watch38" orientation="portrait"/>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="19006"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="wpMainScene">
+            <objects>
+                <controller id="wpMainCtrl" customClass="InterfaceController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
+                    <items>
+                        <label width="1" alignment="left" text="My Videos" id="wpHdrLbl"/>
+                        <table alignment="left" id="wpTable">
+                            <items>
+                                <tableRow identifier="VideoRow" id="wpRowProto" customClass="VideoRowController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
+                                    <group width="1" height="1" alignment="left" layout="vertical" id="wpRowGroup">
+                                        <label width="1" alignment="left" text="Title" numberOfLines="1" id="wpRowTitle"/>
+                                        <label width="1" alignment="left" text="Detail" numberOfLines="1" id="wpRowMeta"/>
+                                    </group>
+                                    <connections>
+                                        <outlet property="titleLabel" destination="wpRowTitle" id="wpORowTitle"/>
+                                        <outlet property="metaLabel" destination="wpRowMeta" id="wpORowMeta"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                        <label alignment="center" text="No videos yet. Send some from your iPhone, or pick a streaming title above." textAlignment="center" numberOfLines="4" hidden="YES" id="wpEmptyLbl"/>
+                        <button width="1" alignment="left" title="Refresh" id="wpRefreshBtn">
+                            <connections>
+                                <action selector="onRefresh:" destination="wpMainCtrl" id="wpActRefresh"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="table" destination="wpTable" id="wpOTable"/>
+                        <outlet property="emptyLabel" destination="wpEmptyLbl" id="wpOEmpty"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="20" y="20"/>
+        </scene>
+        <scene sceneID="wpMovieScene">
+            <objects>
+                <controller identifier="moviePlayer" id="wpMovieCtrl" customClass="MovieInterfaceController" customModule="WatchPlayer_WatchKit_Extension" customModuleProvider="target">
+                    <items>
+                        <movie alignment="left" id="wpMovieItem"/>
+                    </items>
+                    <connections>
+                        <outlet property="moviePlayer" destination="wpMovieItem" id="wpOMovie"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="240" y="20"/>
+        </scene>
+    </scenes>
+</document>
