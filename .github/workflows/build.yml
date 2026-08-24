@@ -31,12 +31,14 @@ jobs:
             ONLY_ACTIVE_ARCH=YES \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
+            TARGET_BUILD_DIR="$PWD/build/Products" \
+            BUILT_PRODUCTS_DIR="$PWD/build/Products" \
             SYMROOT="$PWD/build" 2>&1 | tee build.log
 
       - name: Package IPA
         run: |
           mkdir -p Payload
-          cp -R "build/Release-iphoneos/WatchPlayer.app" Payload/
+          cp -R "build/Products/WatchPlayer.app" Payload/
           zip -qry WatchPlayer-unsigned.ipa Payload
           ls -la WatchPlayer-unsigned.ipa
 
