@@ -29,7 +29,7 @@ targets:
     scheme:
       testTargets: []
   WatchPlayer WatchKit App:
-    type: application.watchapp2
+    type: application
     platform: watchOS
     sources:
       - path: WatchApp
