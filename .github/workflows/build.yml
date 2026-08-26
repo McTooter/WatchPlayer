@@ -54,7 +54,6 @@ jobs:
             -project "$PROJECT" \
             -scheme "$SCHEME" \
             -configuration Release \
-            -sdk iphoneos \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/WatchPlayer-unsigned.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
@@ -176,7 +175,6 @@ jobs:
             -project "$PROJECT" \
             -scheme "$SCHEME" \
             -configuration Release \
-            -sdk iphoneos \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/WatchPlayer.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
