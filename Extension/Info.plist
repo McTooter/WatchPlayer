@@ -34,8 +34,6 @@
 	</dict>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.watchplayer.WatchPlayer</string>
-	<key>WKRunsIndependentlyOfCompanionApp</key>
-	<true/>
 	<key>WKWatchOnly</key>
 	<false/>
 </dict>
