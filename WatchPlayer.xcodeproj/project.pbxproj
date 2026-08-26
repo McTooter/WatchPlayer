@@ -199,7 +199,7 @@
 			name = "WatchPlayer WatchKit App";
 			productName = "WatchPlayer WatchKit App";
 			productReference = F40000000000000000000002 /* WatchPlayer WatchKit App.app */;
-			productType = "com.apple.product-type.application";
+			productType = "com.apple.product-type.application.watchapp2";
 		};
 		F50000000000000000000003 /* WatchPlayer WatchKit Extension */ = {
 			isa = PBXNativeTarget;
@@ -216,7 +216,7 @@
 			name = "WatchPlayer WatchKit Extension";
 			productName = "WatchPlayer WatchKit Extension";
 			productReference = F40000000000000000000003 /* WatchPlayer WatchKit Extension.appex */;
-			productType = "com.apple.product-type.app-extension";
+			productType = "com.apple.product-type.watchkit2-extension";
 		};
 /* End PBXNativeTarget section */
 
