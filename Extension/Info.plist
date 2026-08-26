@@ -27,8 +27,10 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.watchkit</string>
 	</dict>
-	<key>WKCompanionAppBundleIdentifier</key>
-	<string>com.watchplayer.WatchPlayer</string>
+		<key>WKAppBundleIdentifier</key>
+		<string>com.watchplayer.WatchPlayer.watchkitapp</string>
+		<key>WKCompanionAppBundleIdentifier</key>
+		<string>com.watchplayer.WatchPlayer</string>
 	<key>WKRunsIndependentlyOfCompanionApp</key>
 	<true/>
 	<key>WKWatchOnly</key>
