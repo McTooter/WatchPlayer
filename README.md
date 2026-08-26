@@ -41,6 +41,26 @@ brew install xcodegen
 xcodegen generate   # uses project.yml in this folder
 ```
 
+## Build an IPA with GitHub Actions
+
+The repository includes a workflow at `.github/workflows/build.yml`. Open the repository’s **Actions** tab, select **Build WatchPlayer IPA**, choose **Run workflow**, and select `unsigned` to produce `WatchPlayer-unsigned.ipa` as a downloadable workflow artifact. This package is useful for inspecting the app bundle, but an unsigned IPA cannot be installed on an iPhone or Apple Watch.
+
+To create an installable IPA, configure the following repository secrets in **Settings → Secrets and variables → Actions** and run the workflow with `signed` selected:
+
+| Secret | Value |
+|---|---|
+| `APPLE_CERTIFICATE_BASE64` | Base64-encoded Apple distribution `.p12` certificate |
+| `APPLE_CERTIFICATE_PASSWORD` | Password used when exporting the `.p12` certificate |
+| `APPLE_KEYCHAIN_PASSWORD` | Any temporary password for the CI keychain |
+| `APPLE_TEAM_ID` | Your 10-character Apple Developer Team ID |
+| `APPLE_IOS_PROVISIONING_PROFILE_BASE64` | Base64-encoded profile for `com.watchplayer.WatchPlayer` |
+| `APPLE_WATCH_APP_PROVISIONING_PROFILE_BASE64` | Base64-encoded profile for `com.watchplayer.WatchPlayer.watchkitapp` |
+| `APPLE_WATCH_EXTENSION_PROVISIONING_PROFILE_BASE64` | Base64-encoded profile for `com.watchplayer.WatchPlayer.watchkitapp.extension` |
+
+The three provisioning profiles must belong to the same App ID family and team, and the selected export method must match their type. For example, use `ad-hoc` for an Ad Hoc profile or `app-store` for an App Store profile. The workflow uploads the resulting `WatchPlayer.ipa` under the **Actions** run’s artifacts. Apple Developer signing is required for a device-installable package; GitHub Actions can build the file, but it cannot create Apple certificates or profiles for you.
+
+For local base64 encoding, run `base64 -i MyProfile.mobileprovision | pbcopy` on macOS, or `base64 -w 0 MyProfile.mobileprovision` on Linux. Treat the certificate, password, and profiles as private credentials.
+
 ## Adding your own videos
 
 - Easiest: open the iPhone app, tap **Choose Videos**, pick MP4/MOV/M4V files.

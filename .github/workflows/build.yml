@@ -1,55 +1,239 @@
-name: Build unsigned IPA
+name: Build WatchPlayer IPA
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Whether to create an unsigned or signed IPA"
+        required: true
+        default: unsigned
+        type: choice
+        options:
+          - unsigned
+          - signed
+      export_method:
+        description: "Signing export method (used only for signed builds)"
+        required: true
+        default: ad-hoc
+        type: choice
+        options:
+          - development
+          - ad-hoc
+          - app-store
   push:
     tags: ["v*"]
 
 permissions:
   contents: write
 
+env:
+  PROJECT: WatchPlayer.xcodeproj
+  TARGET: WatchPlayer
+  SCHEME: WatchPlayer
+  IOS_BUNDLE_ID: com.watchplayer.WatchPlayer
+  WATCH_APP_BUNDLE_ID: com.watchplayer.WatchPlayer.watchkitapp
+  WATCH_EXTENSION_BUNDLE_ID: com.watchplayer.WatchPlayer.watchkitapp.extension
+
 jobs:
-  build:
-    runs-on: macos-latest
+  unsigned:
+    name: Build unsigned IPA
+    if: github.event_name == 'push' || github.event.inputs.build_type == 'unsigned'
+    runs-on: macos-14
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Show toolchain
-        run: |
-          xcodebuild -version
-          xcrun simctl runtime list 2>/dev/null || true
+        run: xcodebuild -version
 
-      - name: Build WatchPlayer.app (unsigned)
+      - name: Archive without code signing
+        shell: bash
         run: |
-          set -o pipefail
-          xcodebuild \
-            -project WatchPlayer.xcodeproj \
-            -target WatchPlayer \
+          set -euo pipefail
+          xcodebuild archive \
+            -project "$PROJECT" \
+            -target "$TARGET" \
             -configuration Release \
-            ARCHS=arm64 \
-            ONLY_ACTIVE_ARCH=YES \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/WatchPlayer-unsigned.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            TARGET_BUILD_DIR="$PWD/build/Products" \
-            BUILT_PRODUCTS_DIR="$PWD/build/Products" \
-            SYMROOT="$PWD/build" 2>&1 | tee build.log
+            | tee "$RUNNER_TEMP/unsigned-archive.log"
 
-      - name: Package IPA
+      - name: Package unsigned IPA
+        shell: bash
         run: |
-          mkdir -p Payload
-          cp -R "build/Products/WatchPlayer.app" Payload/
-          zip -qry WatchPlayer-unsigned.ipa Payload
-          ls -la WatchPlayer-unsigned.ipa
+          set -euo pipefail
+          APP_PATH="$RUNNER_TEMP/WatchPlayer-unsigned.xcarchive/Products/Applications/WatchPlayer.app"
+          test -d "$APP_PATH"
+          mkdir -p "$RUNNER_TEMP/unsigned/Payload"
+          cp -R "$APP_PATH" "$RUNNER_TEMP/unsigned/Payload/"
+          (cd "$RUNNER_TEMP/unsigned" && zip -qry "$GITHUB_WORKSPACE/WatchPlayer-unsigned.ipa" Payload)
+          ls -lh WatchPlayer-unsigned.ipa
 
-      - name: Upload artifact
+      - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
           name: WatchPlayer-unsigned-ipa
           path: WatchPlayer-unsigned.ipa
+          if-no-files-found: error
 
-      - name: Attach to release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Attach unsigned IPA to tagged release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: WatchPlayer-unsigned.ipa
+
+  signed:
+    name: Build signed IPA
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'signed'
+    runs-on: macos-14
+    env:
+      CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+      CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      IOS_PROFILE_BASE64: ${{ secrets.APPLE_IOS_PROVISIONING_PROFILE_BASE64 }}
+      WATCH_APP_PROFILE_BASE64: ${{ secrets.APPLE_WATCH_APP_PROVISIONING_PROFILE_BASE64 }}
+      WATCH_EXTENSION_PROFILE_BASE64: ${{ secrets.APPLE_WATCH_EXTENSION_PROVISIONING_PROFILE_BASE64 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+      EXPORT_METHOD: ${{ github.event.inputs.export_method }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: xcodebuild -version
+
+      - name: Validate signing secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(CERTIFICATE_BASE64 CERTIFICATE_PASSWORD IOS_PROFILE_BASE64 WATCH_APP_PROFILE_BASE64 WATCH_EXTENSION_PROFILE_BASE64 APPLE_TEAM_ID KEYCHAIN_PASSWORD)
+          for variable in "${required[@]}"; do
+            if [ -z "${!variable:-}" ]; then
+              echo "Missing required GitHub Actions secret for $variable."
+              exit 1
+            fi
+          done
+
+      - name: Import distribution certificate
+        shell: bash
+        run: |
+          set -euo pipefail
+          CERTIFICATE_PATH="$RUNNER_TEMP/apple-distribution.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/watchplayer-build.keychain-db"
+          printf '%s' "$CERTIFICATE_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" \
+            -P "$CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 \
+            -k "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security default-keychain -s "$KEYCHAIN_PATH"
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | awk -F'"' '/Apple Distribution|iPhone Distribution/ {print $2; exit}')"
+          test -n "$IDENTITY"
+          echo "CODE_SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Install provisioning profiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILE_DIR"
+
+          install_profile() {
+            local encoded="$1"
+            local label="$2"
+            local temporary="$RUNNER_TEMP/$label.mobileprovision"
+            printf '%s' "$encoded" | base64 --decode > "$temporary"
+            local decoded="$RUNNER_TEMP/$label.plist"
+            security cms -D -i "$temporary" > "$decoded"
+            local uuid
+            uuid="$(/usr/libexec/PlistBuddy -c 'Print:UUID' "$decoded")"
+            local name
+            name="$(/usr/libexec/PlistBuddy -c 'Print:Name' "$decoded")"
+            cp "$temporary" "$PROFILE_DIR/$uuid.mobileprovision"
+            echo "${label}_UUID=$uuid" >> "$GITHUB_ENV"
+            echo "${label}_NAME=$name" >> "$GITHUB_ENV"
+          }
+
+          install_profile "$IOS_PROFILE_BASE64" IOS_PROFILE
+          install_profile "$WATCH_APP_PROFILE_BASE64" WATCH_APP_PROFILE
+          install_profile "$WATCH_EXTENSION_PROFILE_BASE64" WATCH_EXTENSION_PROFILE
+
+      - name: Archive app and watch companion
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project "$PROJECT" \
+            -target "$TARGET" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/WatchPlayer.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            | tee "$RUNNER_TEMP/signed-archive.log"
+
+      - name: Export signed IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>$EXPORT_METHOD</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>$APPLE_TEAM_ID</string>
+            <key>signingCertificate</key>
+            <string>$CODE_SIGN_IDENTITY</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>$IOS_BUNDLE_ID</key>
+              <string>$IOS_PROFILE_NAME</string>
+              <key>$WATCH_APP_BUNDLE_ID</key>
+              <string>$WATCH_APP_PROFILE_NAME</string>
+              <key>$WATCH_EXTENSION_BUNDLE_ID</key>
+              <string>$WATCH_EXTENSION_PROFILE_NAME</string>
+            </dict>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/WatchPlayer.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            | tee "$RUNNER_TEMP/export.log"
+          cp "$RUNNER_TEMP/export/WatchPlayer.ipa" "$GITHUB_WORKSPACE/WatchPlayer.ipa"
+          ls -lh WatchPlayer.ipa
+
+      - name: Upload signed IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: WatchPlayer-signed-ipa
+          path: WatchPlayer.ipa
+          if-no-files-found: error
+
+      - name: Clean up signing material
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain "$RUNNER_TEMP/watchplayer-build.keychain-db" 2>/dev/null || true
+          rm -f "$RUNNER_TEMP/apple-distribution.p12"
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision
