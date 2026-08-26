@@ -52,7 +52,6 @@ jobs:
           set -euo pipefail
           xcodebuild archive \
             -project "$PROJECT" \
-            -target "$TARGET" \
             -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
@@ -175,7 +174,6 @@ jobs:
           set -euo pipefail
           xcodebuild archive \
             -project "$PROJECT" \
-            -target "$TARGET" \
             -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
