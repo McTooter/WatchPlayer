@@ -53,6 +53,7 @@ jobs:
           xcodebuild archive \
             -project "$PROJECT" \
             -target "$TARGET" \
+            -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
@@ -175,6 +176,7 @@ jobs:
           xcodebuild archive \
             -project "$PROJECT" \
             -target "$TARGET" \
+            -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
