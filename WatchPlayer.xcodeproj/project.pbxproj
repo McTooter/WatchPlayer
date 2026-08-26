@@ -42,8 +42,8 @@
 		F80000000000000000000004 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "$(TARGET_BUILD_DIR)/$(WRAPPER_NAME)/Watch";
-			dstSubfolderSpec = 0;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
 			files = (
 				BF0000000000000000000013 /* WatchPlayer WatchKit App.app in Embed Watch Content */,
 			);
