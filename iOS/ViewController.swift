@@ -71,10 +71,16 @@ extension ViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController,
                         didPickDocumentsAt urls: [URL]) {
         guard WCSession.isSupported() else { return }
+        guard WCSession.default.activationState == .activated else {
+            statusLabel.text = "WatchConnectivity is still activating. Please try again."
+            return
+        }
+
         let fm = FileManager.default
         for source in urls {
-            let dest = fm.temporaryDirectory.appendingPathComponent(source.lastPathComponent)
-            try? fm.removeItem(at: dest)
+            let dest = fm.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension(source.pathExtension)
             do {
                 try fm.copyItem(at: source, to: dest)
             } catch {
@@ -104,6 +110,7 @@ extension ViewController: WCSessionDelegate {
     func session(_ session: WCSession,
                  didFinish fileTransfer: WCSessionFileTransfer,
                  error: Error?) {
+        try? FileManager.default.removeItem(at: fileTransfer.file.fileURL)
         DispatchQueue.main.async {
             self.pendingTransfers = max(0, self.pendingTransfers - 1)
             self.updateStatus()

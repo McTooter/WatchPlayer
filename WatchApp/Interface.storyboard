@@ -29,7 +29,7 @@
                         <label alignment="center" text="No videos yet. Send some from your iPhone." textAlignment="center" numberOfLines="4" hidden="YES" id="wpEmptyLbl"/>
                         <button width="1" alignment="left" title="Refresh" id="wpRefreshBtn">
                             <connections>
-                                <action selector="onRefresh:" destination="wpMainCtrl" id="wpActRefresh"/>
+                                <action selector="onRefresh" destination="wpMainCtrl" id="wpActRefresh"/>
                             </connections>
                         </button>
                     </items>

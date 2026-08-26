@@ -78,10 +78,14 @@ final class VideoLibrary {
             .joined(separator: "-")
         if sanitized.isEmpty { return false }
 
-        var dest = documentsDirectory.appendingPathComponent(sanitized)
+        let ext = (sanitized as NSString).pathExtension
+        let stem = (sanitized as NSString).deletingPathExtension
+        var candidate = sanitized
         var bump = 1
+        var dest = documentsDirectory.appendingPathComponent(candidate)
         while fm.fileExists(atPath: dest.path) {
-            dest = documentsDirectory.appendingPathComponent("\(sanitized)-\(bump)")
+            candidate = ext.isEmpty ? "\(stem)-\(bump)" : "\(stem)-\(bump).\(ext)"
+            dest = documentsDirectory.appendingPathComponent(candidate)
             bump += 1
         }
         do {

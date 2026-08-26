@@ -18,7 +18,9 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
 
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
         let title = (file.metadata?["title"] as? String) ?? file.fileURL.lastPathComponent
-        let stored = VideoLibrary.store(fileAt: file.fileURL, preferredName: title)
+        guard VideoLibrary.store(fileAt: file.fileURL, preferredName: title) else {
+            return
+        }
         VideoLibrary.shared.reload()
     }
 }
