@@ -22,15 +22,18 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSExtension</key>
 	<dict>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<key>WKAppBundleIdentifier</key>
+			<string>com.watchplayer.WatchPlayer.watchkitapp</string>
+		</dict>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ExtensionDelegate</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.watchkit</string>
 	</dict>
-		<key>WKAppBundleIdentifier</key>
-		<string>com.watchplayer.WatchPlayer.watchkitapp</string>
-		<key>WKCompanionAppBundleIdentifier</key>
-		<string>com.watchplayer.WatchPlayer</string>
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.watchplayer.WatchPlayer</string>
 	<key>WKRunsIndependentlyOfCompanionApp</key>
 	<true/>
 	<key>WKWatchOnly</key>
